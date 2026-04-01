@@ -1,0 +1,128 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# 1. DEFINIÇÃO DO EIXO DISCRETO
+
+n = np.arange(-10, 21)
+
+
+# 2. SINAIS ELEMENTARES
+
+
+# Impulso unitário
+impulso = np.where(n == 0, 1, 0)
+
+# Degrau unitário
+degrau = np.where(n >= 0, 1, 0)
+
+# Exponencial discreta amortecida
+exp_amortecida = (0.8)**n * degrau
+
+
+# 3. SINAL DE SENSOR (EXEMPLO REAL)
+
+# Simulação de temperatura com ruído
+np.random.seed(42)
+sensor = 25 + 2*np.sin(0.3*n) + 0.5*np.random.randn(len(n))
+
+
+# 4. OPERAÇÕES COM SINAIS
+
+# Deslocamento para a direita: x[n-3]
+sensor_deslocado = np.roll(sensor, 3)
+
+# Inversão temporal: x[-n]
+sensor_invertido = sensor[::-1]
+
+# Escalonamento de amplitude: 2x[n]
+sensor_escalonado = 2 * sensor
+
+
+# 5. ENERGIA E POTÊNCIA
+
+
+energia_sensor = np.sum(np.abs(sensor)**2)
+potencia_sensor = np.mean(np.abs(sensor)**2)
+
+energia_exp = np.sum(np.abs(exp_amortecida)**2)
+potencia_exp = np.mean(np.abs(exp_amortecida)**2)
+
+print("=== RESULTADOS NUMÉRICOS ===")
+print(f"Energia do sinal do sensor: {energia_sensor:.2f}")
+print(f"Potência do sinal do sensor: {potencia_sensor:.2f}")
+print(f"Energia da exponencial amortecida: {energia_exp:.2f}")
+print(f"Potência da exponencial amortecida: {potencia_exp:.2f}")
+
+
+# 6. GRÁFICOS
+
+
+plt.figure(figsize=(12, 8))
+
+plt.subplot(2, 2, 1)
+plt.stem(n, impulso)
+plt.title("Impulso Unitário")
+plt.xlabel("n")
+plt.ylabel("δ[n]")
+plt.grid()
+
+plt.subplot(2, 2, 2)
+plt.stem(n, degrau)
+plt.title("Degrau Unitário")
+plt.xlabel("n")
+plt.ylabel("u[n]")
+plt.grid()
+
+plt.subplot(2, 2, 3)
+plt.stem(n, exp_amortecida)
+plt.title("Exponencial Discreta Amortecida")
+plt.xlabel("n")
+plt.ylabel("x[n]")
+plt.grid()
+
+plt.subplot(2, 2, 4)
+plt.plot(n, sensor, marker='o')
+plt.title("Sinal de Sensor Simulado")
+plt.xlabel("n")
+plt.ylabel("Temperatura (°C)")
+plt.grid()
+
+plt.tight_layout()
+plt.show()
+
+
+# 7. OPERAÇÕES COM O SINAL DO SENSOR
+
+plt.figure(figsize=(12, 8))
+
+plt.subplot(2, 2, 1)
+plt.plot(n, sensor, marker='o')
+plt.title("Sinal Original")
+plt.xlabel("n")
+plt.ylabel("x[n]")
+plt.grid()
+
+plt.subplot(2, 2, 2)
+plt.plot(n, sensor_deslocado, marker='o')
+plt.title("Sinal Deslocado: x[n-3]")
+plt.xlabel("n")
+plt.ylabel("x[n-3]")
+plt.grid()
+
+plt.subplot(2, 2, 3)
+plt.plot(n, sensor_invertido, marker='o')
+plt.title("Sinal Invertido: x[-n]")
+plt.xlabel("n")
+plt.ylabel("x[-n]")
+plt.grid()
+
+plt.subplot(2, 2, 4)
+plt.plot(n, sensor_escalonado, marker='o')
+plt.title("Sinal Escalonado: 2x[n]")
+plt.xlabel("n")
+plt.ylabel("2x[n]")
+plt.grid()
+
+plt.tight_layout()
+plt.show()
